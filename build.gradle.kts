@@ -18,6 +18,11 @@ dependencies {
     implementation("org.hibernate:hibernate-core:6.5.2.Final")
     runtimeOnly("org.postgresql:postgresql:42.7.3")
 
+    implementation("io.hypersistence:hypersistence-utils-hibernate-63:3.7.6")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.17.1")
+
+    implementation("org.slf4j:slf4j-api:2.0.13")
+
     compileOnly("org.projectlombok:lombok:1.18.32")
     annotationProcessor("org.projectlombok:lombok:1.18.32")
 

@@ -1,5 +1,8 @@
 package org.example;
 
+import org.example.converters.BirthdayConverter;
+import org.example.entity.Birthday;
+import org.example.entity.Role;
 import org.example.entity.User;
 import org.hibernate.cfg.Configuration;
 
@@ -11,6 +14,7 @@ public class HibernateRunner {
     public static void main(String[] args) throws SQLException {
         var configuration = new Configuration();
         configuration.configure();
+        configuration.addAttributeConverter(BirthdayConverter.class, true);
         try (var sessionFactory = configuration.buildSessionFactory();
              var session = sessionFactory.openSession()) {
 
@@ -19,8 +23,12 @@ public class HibernateRunner {
                     .username("ivan@gmail.com")
                     .firstName("Ivan")
                     .lastName("Ivanov")
-                    .birthDate(LocalDate.of(2000, 1, 19))
-                    .age(20)
+                    .info("""
+                            {"name": "Ivan",
+                            "id": 25}                       
+                            """)
+                    .birthDate(new Birthday(LocalDate.of(2000, 1, 19)))
+                    .role(Role.ADMIN)
                     .build();
             session.save(user);
 
