@@ -20,7 +20,7 @@ public class HibernateRunner {
 
             session.beginTransaction();
             var user = User.builder()
-                    .username("ivan@gmail.com")
+                    .username("ivan12@gmail.com")
                     .firstName("Ivan")
                     .lastName("Ivanov")
                     .info("""
@@ -30,7 +30,7 @@ public class HibernateRunner {
                     .birthDate(new Birthday(LocalDate.of(2000, 1, 19)))
                     .role(Role.ADMIN)
                     .build();
-            session.save(user);
+            session.get(User.class, "ivan@gmail.com");
 
             session.getTransaction().commit();
         }
