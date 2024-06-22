@@ -1,5 +1,6 @@
 package org.example;
 
+import io.hypersistence.utils.hibernate.naming.CamelCaseToSnakeCaseNamingStrategy;
 import org.example.converters.BirthdayConverter;
 import org.example.entity.Birthday;
 import org.example.entity.Role;
@@ -13,8 +14,10 @@ public class HibernateRunner {
 
     public static void main(String[] args) throws SQLException {
         var configuration = new Configuration();
-        configuration.configure();
+//        configuration.setPhysicalNamingStrategy(new CamelCaseToSnakeCaseNamingStrategy());
+        configuration.addAnnotatedClass(User.class);
         configuration.addAttributeConverter(BirthdayConverter.class, true);
+        configuration.configure();
         try (var sessionFactory = configuration.buildSessionFactory();
              var session = sessionFactory.openSession()) {
 
@@ -30,7 +33,11 @@ public class HibernateRunner {
                     .birthDate(new Birthday(LocalDate.of(2000, 1, 19)))
                     .role(Role.ADMIN)
                     .build();
-            session.get(User.class, "ivan@gmail.com");
+            var user1 = session.get(User.class, "ivan@gmail.com");
+            var user2 = session.get(User.class, "ivan@gmail.com");
+
+            user2.setLastName("Petrov2");
+            session.flush();
 
             session.getTransaction().commit();
         }
