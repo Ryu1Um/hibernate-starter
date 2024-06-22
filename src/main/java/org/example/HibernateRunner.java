@@ -5,6 +5,7 @@ import org.example.converters.BirthdayConverter;
 import org.example.entity.Birthday;
 import org.example.entity.Role;
 import org.example.entity.User;
+import org.example.util.HibernateUtil;
 import org.hibernate.cfg.Configuration;
 
 import java.sql.SQLException;
@@ -13,33 +14,34 @@ import java.time.LocalDate;
 public class HibernateRunner {
 
     public static void main(String[] args) throws SQLException {
-        var configuration = new Configuration();
-//        configuration.setPhysicalNamingStrategy(new CamelCaseToSnakeCaseNamingStrategy());
-        configuration.addAnnotatedClass(User.class);
-        configuration.addAttributeConverter(BirthdayConverter.class, true);
-        configuration.configure();
-        try (var sessionFactory = configuration.buildSessionFactory();
-             var session = sessionFactory.openSession()) {
+        //TRANSIENT
+        var user = User.builder()
+                .username("ivan@gmail.com")
+                .lastName("Ivanov")
+                .firstName("Ivan")
+                .build();
 
-            session.beginTransaction();
-            var user = User.builder()
-                    .username("ivan12@gmail.com")
-                    .firstName("Ivan")
-                    .lastName("Ivanov")
-                    .info("""
-                            {"name": "Ivan",
-                            "id": 25}                       
-                            """)
-                    .birthDate(new Birthday(LocalDate.of(2000, 1, 19)))
-                    .role(Role.ADMIN)
-                    .build();
-            var user1 = session.get(User.class, "ivan@gmail.com");
-            var user2 = session.get(User.class, "ivan@gmail.com");
+        try (var sessionFactory = HibernateUtil.buildSessionFactory()) {
+            try (var session1 = sessionFactory.openSession()) {
+                session1.beginTransaction();
 
-            user2.setLastName("Petrov2");
-            session.flush();
+                session1.saveOrUpdate(user);
 
-            session.getTransaction().commit();
+                session1.getTransaction().commit();
+            }
+
+            try (var session2 = sessionFactory.openSession()) {
+                session2.beginTransaction();
+//                session2.delete(user);
+                user.setFirstName("Sveta");
+//                session2.refresh(user);
+                var freshUser = session2.get(User.class, user.getUsername());
+                user.setLastName(freshUser.getLastName());
+                user.setLastName(freshUser.getLastName());
+
+                session2.merge(user);
+                session2.getTransaction().commit();
+            }
         }
 
     }
