@@ -4,6 +4,7 @@ import io.hypersistence.utils.hibernate.naming.CamelCaseToSnakeCaseNamingStrateg
 import lombok.extern.slf4j.Slf4j;
 import org.example.converters.BirthdayConverter;
 import org.example.entity.Birthday;
+import org.example.entity.PersonalInfo;
 import org.example.entity.Role;
 import org.example.entity.User;
 import org.example.util.HibernateUtil;
@@ -21,9 +22,11 @@ public class HibernateRunner {
     public static void main(String[] args) throws SQLException {
         //TRANSIENT
         var user = User.builder()
-                .username("ivan@gmail.com")
-                .lastName("Ivanov")
-                .firstName("Ivan")
+                .username("ivan1@gmail.com")
+                .personalInfo(PersonalInfo.builder()
+                        .lastName("Petrov")
+                        .firstName("Petr")
+                        .build())
                 .build();
 
         log.info("User entity is in transient state, object: {}", user);
