@@ -17,10 +17,7 @@ import org.hibernate.annotations.Type;
 @AllArgsConstructor
 public class User {
 
-    @Id
-    private String username;
-
-    @Embedded
+    @EmbeddedId
     @AttributeOverride(name = "birthDate", column = @Column(name = "birth_date"))
     private PersonalInfo personalInfo;
 
