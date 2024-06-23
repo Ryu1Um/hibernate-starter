@@ -19,11 +19,10 @@ public class User {
 
     @Id
     private String username;
-    private String firstName;
-    private String lastName;
-    //    @Convert(converter = BirthdayConverter.class) alternative to configuration.addAttributeConverter
-    @Column(name = "birth_date")
-    private Birthday birthDate;
+
+    @Embedded
+    @AttributeOverride(name = "birthDate", column = @Column(name = "birth_date"))
+    private PersonalInfo personalInfo;
 
     @Type(JsonBinaryType.class)
     private String info;
