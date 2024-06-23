@@ -22,10 +22,10 @@ public class HibernateRunner {
     public static void main(String[] args) throws SQLException {
         //TRANSIENT
         var user = User.builder()
-                .username("ivan1@gmail.com")
                 .personalInfo(PersonalInfo.builder()
                         .lastName("Petrov")
                         .firstName("Petr")
+                        .birthDate(new Birthday(LocalDate.of(2000, 1, 2)))
                         .build())
                 .build();
 
@@ -43,6 +43,17 @@ public class HibernateRunner {
                 session1.getTransaction().commit();
             }
             log.warn("User is detached state: {}, session is closed {}", user, session1);
+
+            try (var session = sessionFactory.openSession()) {
+                var key = PersonalInfo.builder()
+                        .lastName("Petrov")
+                        .firstName("Petr")
+                        .birthDate(new Birthday(LocalDate.of(2000, 1, 2)))
+                        .build();
+
+                var user2 = session.get(User.class, key);
+                log.info("USER2 {}", user2);
+            }
         } catch (Exception e) {
             log.error("Exception occurred", e);
         }
